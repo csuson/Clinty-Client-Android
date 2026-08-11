@@ -1,0 +1,17 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+*.apk
+*.ap_
+*.aab
+app/build/
+.kotlin/
+
+# Local secrets override (optional)
+app/src/main/java/com/clinty/client/LocalSecrets.kt
