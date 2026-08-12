@@ -15,6 +15,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -30,10 +32,14 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.clinty.client.models.AgentInbox
 import com.clinty.client.viewmodels.InboxSettingsViewModel
@@ -76,22 +82,16 @@ fun SettingsScreen(
         ) {
             Text("Authentication", style = MaterialTheme.typography.titleMedium)
             Spacer(Modifier.height(8.dp))
-            OutlinedTextField(
+            ApiKeyTextField(
                 value = clintAPIKey,
                 onValueChange = viewModel::updateClintAPIKey,
-                label = { Text("Clint API Key") },
-                visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
+                label = "Clint API Key",
             )
             Spacer(Modifier.height(8.dp))
-            OutlinedTextField(
+            ApiKeyTextField(
                 value = langsmithAPIKey,
                 onValueChange = viewModel::updateLangsmithAPIKey,
-                label = { Text("LangSmith API Key") },
-                visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
+                label = "LangSmith API Key",
             )
             Spacer(Modifier.height(8.dp))
             Button(onClick = viewModel::saveAPIKeys) {
@@ -228,6 +228,36 @@ fun SettingsScreen(
             }
         }
     }
+}
+
+@Composable
+private fun ApiKeyTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+) {
+    var showPlainText by remember { mutableStateOf(false) }
+
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label) },
+        visualTransformation = if (showPlainText) {
+            VisualTransformation.None
+        } else {
+            PasswordVisualTransformation()
+        },
+        trailingIcon = {
+            IconButton(onClick = { showPlainText = !showPlainText }) {
+                Icon(
+                    imageVector = if (showPlainText) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                    contentDescription = if (showPlainText) "Hide API key" else "Show API key",
+                )
+            }
+        },
+        modifier = Modifier.fillMaxWidth(),
+        singleLine = true,
+    )
 }
 
 @Composable
